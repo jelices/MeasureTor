@@ -1,7 +1,8 @@
+#!/usr/bin/python
 '''
 Created on Dec 30, 2013
 
-@author: juan
+@author: Juan Antonio Elices
 '''
 from twisted.internet.protocol import Factory
 from twisted.protocols.basic import LineReceiver
@@ -15,9 +16,10 @@ from argparse import ArgumentParser
 class ServerProtocol(LineReceiver):
 
     def __init__(self, size):
-        self.size = size-49 if size > 49 else 0
+        self._size = size-49 if size > 49 else 0
+        
     def connectionMade(self):
-        print self.transport.getPeer
+        print self.transport.getPeer()
     
     def lineReceived(self, line):
         data = json.loads(line)
@@ -28,7 +30,7 @@ class ServerProtocol(LineReceiver):
 class ServerFactory(Factory):
 
     def __init__(self,size):
-        self.size = size # maps user names to Chat instances
+        self.size = size
 
     def buildProtocol(self, addr):
         return ServerProtocol(self.size)
@@ -47,3 +49,6 @@ class MyEncoder(json.JSONEncoder):
         if isinstance(obj, datetime.datetime):
            return int(calendar.timegm(obj.timetuple()) * 1000 + obj.microsecond / 1000)       
         return json.JSONEncoder.default(self, obj)
+
+if __name__ == '__main__':
+    main()
